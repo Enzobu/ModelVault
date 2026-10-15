@@ -1,1 +1,17 @@
-export default function Home(){return <main className="mx-auto flex min-h-screen max-w-4xl flex-col justify-center gap-5 px-6"><div className="flex items-center gap-3"><span className="grid size-12 place-items-center rounded-xl bg-[var(--accent)] text-xl font-bold text-white">M</span><h1 className="text-3xl font-semibold">ModelVault</h1></div><p className="text-lg opacity-75">Votre médiathèque 3D prend forme.</p><p className="text-sm opacity-60">Socle technique initialisé. Connexion Google et bibliothèque à venir.</p></main>}
+import { redirect } from "next/navigation";
+import { currentUser, roleAllows } from "@/lib/access";
+import { signOut } from "@/auth";
+
+export default async function Home() {
+  const user = await currentUser();
+  if (!user) redirect("/login");
+  if (!roleAllows(user.role, "USER")) redirect("/pending");
+  return <main className="mx-auto flex min-h-screen max-w-4xl flex-col justify-center gap-6 px-6">
+    <h1 className="text-3xl font-semibold">ModelVault</h1>
+    <p>Bienvenue {user.displayName ?? user.email}. Votre bibliothèque est en préparation.</p>
+    <p className="text-sm opacity-70">Rôle : {user.role}</p>
+    <form action={async () => { "use server"; await signOut({ redirectTo: "/login" }); }}>
+      <button type="submit" className="rounded-lg border px-4 py-2">Se déconnecter</button>
+    </form>
+  </main>;
+}
