@@ -1,51 +1,21 @@
-# Agent Rules
+# ModelVault
 
-Reusable development rules and workflows for Claude Code, Codex and OpenCode.
+Médiathèque 3D auto-hébergée (en cours de développement).
 
-The package combines:
+## Stack
 
-- broad engineering rules that adapt to the stack already present in a repository;
-- issue-first delivery for substantial work;
-- dedicated workflows for features, fixes, refactors, commits and ticket closure;
-- specialist agents for backend, frontend, DevOps, IoT, testing and specification review;
-- semantic parity between Claude Code, Codex and OpenCode.
+Next.js · TypeScript · Tailwind · MariaDB · Prisma · Docker Compose
 
-## Install
+## État actuel
 
-Copy the contents of this directory to the root of a project. Review the project-scoped settings before committing them:
+Premier socle uniquement : page d'accueil, endpoint `/api/health`, schéma initial Prisma, Docker Compose et GitHub Actions.
 
-- `.claude/settings.json`
-- `.codex/config.toml`
-- `opencode.json`
+Le SSO Google, la connexion Google Drive, les visualiseurs, la gestion des modèles, les thèmes et le bridge Cura feront l'objet des prochaines phases.
 
-The rules intentionally avoid imposing a framework, branch model, package manager or documentation tool. Agents must discover and follow the conventions already present in the target repository.
+Voir [installation](docs/setup.md).
 
-## Main workflows
+## Git
 
-| Goal | Claude Code | Codex / compatible skills |
-|---|---|---|
-| Load all rules | `/rules` | `$rules` |
-| Create an issue | `/create-ticket` | `$create-ticket` |
-| Deliver a feature | `/feature` | `$feature` |
-| Fix a bug test-first | `/fix` | `$fix` |
-| Refactor safely | `/refactor` or `/refacto` | `$refactor` or `$refacto` |
-| Review current changes | `/review` | `$review` |
-| Check a specification / CDC | `/check-spec` or `/check-cdc` | `$check-spec` or `$check-cdc` |
-| Commit and push | `/commit` | `$commit` |
-| Verify and close an issue | `/close-ticket` | `$close-ticket` |
+`main` → `dev` → `feat/*` / `fix/*` → PR vers `dev` → PR vers `main`.
 
-## Sources of truth
-
-- Claude rules: `.claude/rules/`
-- Codex rule mirror: `.codex/rules/`
-- OpenCode/shared mirror: `.agents/rules/`
-- Claude commands: `.claude/commands/`
-- Codex/shared skills: `.agents/skills/`
-- Claude subagents: `.claude/agents/`
-- Codex subagents: `.codex/agents/`
-
-Run `.agents/scripts/check-ai-parity.sh` after changing the configuration.
-
-## Customization
-
-Project-specific constraints belong in the closest `CLAUDE.md` and `AGENTS.md`, for example inside an app or package. More specific instructions override root-level generic rules.
+La CI vérifie les changements ; Dokploy construit et déploie uniquement après push sur `main`.

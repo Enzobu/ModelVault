@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+enum Role {
+  PENDING
+  USER
+  EDITOR
+  ADMIN
+}
+enum Theme {
+  SYSTEM
+  LIGHT
+  DARK
+}
+enum ColorVariant {
+  LIGHT
+  STANDARD
+  DARK
+}
+model User {
+  id                  String       @id @default(cuid())
+  googleSub           String       @unique
+  email               String       @unique
+  displayName         String?
+  role                Role         @default(PENDING)
+  onboardingCompleted Boolean      @default(false)
+  theme               Theme        @default(SYSTEM)
+  colorPalette        String       @default("cuivre")
+  colorVariant        ColorVariant @default(STANDARD)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  favorites           Favorite[]
+}
+model Model3D {
+  id            String      @id @default(cuid())
+  driveFolderId String      @unique
+  driveName     String
+  displayName   String?
+  description   String?     @db.Text
+  organized     Boolean     @default(false)
+  isHidden      Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  files         ModelFile[]
+  favorites     Favorite[]
+  tags          ModelTag[]
+  categoryId    String?
+  category      Category?   @relation(fields: [categoryId], references: [id])
+  @@index([organized])
+  @@index([categoryId])
+}
+model ModelFile {
+  id            String  @id @default(cuid())
+  googleFileId  String  @unique
+  filename      String
+  format        String
+  sizeBytes     BigInt?
+  modelId       String
+  model         Model3D @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  @@index([modelId])
+}
+model Category {
+  id     String    @id @default(cuid())
+  name   String    @unique
+  models Model3D[]
+}
+model Tag {
+  id     String     @id @default(cuid())
+  name   String     @unique
+  models ModelTag[]
+}
+model ModelTag {
+  modelId String
+  tagId   String
+  model   Model3D @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  @@id([modelId, tagId])
+}
+model Favorite {
+  userId  String
+  modelId String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  model   Model3D @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  @@id([userId, modelId])
+}
