@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
@@ -12,7 +13,7 @@ export default async function AdminUsers() {
     select: { id: true, email: true, displayName: true, role: true, createdAt: true },
   });
   return <main className="mx-auto max-w-4xl space-y-8 p-8">
-    <div><a className="text-sm underline" href="/">Retour</a><h1 className="mt-5 text-3xl font-semibold">Utilisateurs</h1>
+    <div><Link className="text-sm underline" href="/">Retour</Link><h1 className="mt-5 text-3xl font-semibold">Utilisateurs</h1>
       <p className="opacity-70">{users.filter(u => u.role === "PENDING").length} demande(s) en attente</p></div>
     <div className="space-y-4">
       {users.map(user => <div key={user.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-current/10 p-4">
