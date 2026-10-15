@@ -18,7 +18,7 @@ export default async function Onboarding() {
         </div></fieldset>
       <fieldset className="space-y-2"><legend className="font-semibold">Palette</legend>
         <div className="grid grid-cols-2 gap-3">
-          {Object.entries(paletteColors).map(([key,colors],i)=><label key={key} className="rounded-lg border border-current/20 p-3 capitalize">
+          {Object.entries(paletteColors).map(([key,colors])=><label key={key} className="rounded-lg border border-current/20 p-3 capitalize">
             <input className="mr-2" type="radio" name="palette" value={key} defaultChecked={key==="cuivre"}/>{key}
             <span className="mt-2 flex overflow-hidden rounded-md">{colors.map(color=><span key={color} className="h-7 flex-1" style={{backgroundColor:color}}/>)}</span>
           </label>)}
