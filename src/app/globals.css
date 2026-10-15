@@ -1,0 +1,4 @@
+@import "tailwindcss";
+:root{--surface:#f7f7f8;--text:#17181b;--accent:#ad643b;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--surface:#111318;--text:#f5f5f6}}
+body{background:var(--surface);color:var(--text);font-family:Arial,Helvetica,sans-serif}
