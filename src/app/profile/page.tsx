@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { currentUser, roleAllows } from "@/lib/access";
 import { paletteColors } from "@/lib/appearance";
@@ -10,7 +11,7 @@ export default async function Profile() {
   if (!user.onboardingCompleted) redirect("/onboarding");
 
   return <main className="mx-auto max-w-xl space-y-6 p-8">
-    <a href="/" className="text-sm underline">Retour à la bibliothèque</a>
+    <Link href="/" className="text-sm underline">Retour à la bibliothèque</Link>
     <h1 className="text-3xl font-semibold">Mon profil</h1>
     <div><p className="font-semibold">{user.displayName ?? user.email}</p><p className="text-sm opacity-70">{user.email}</p></div>
     <form action={saveAppearance} className="space-y-5">
