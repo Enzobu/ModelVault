@@ -27,5 +27,5 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    expose:
-      - "3000"
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
