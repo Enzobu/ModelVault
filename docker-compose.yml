@@ -1,0 +1,31 @@
+services:
+  database:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE:?required}
+      MARIADB_USER: ${MARIADB_USER:?required}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?required}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?required}
+    volumes:
+      - ${MARIADB_DATA_PATH:?required}:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:?required}
+      AUTH_SECRET: ${AUTH_SECRET:?required}
+    volumes:
+      - ${THUMBNAILS_PATH:?required}:/app/data/thumbnails
+      - ${CACHE_PATH:?required}:/app/data/cache
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
