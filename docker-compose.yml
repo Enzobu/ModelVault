@@ -26,6 +26,7 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?required}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?required}
       INITIAL_ADMIN_EMAIL: ${INITIAL_ADMIN_EMAIL:?required}
+      GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY: ${GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY:-}
     volumes:
       - ${THUMBNAILS_PATH:?required}:/app/data/thumbnails
       - ${CACHE_PATH:?required}:/app/data/cache
