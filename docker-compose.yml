@@ -21,6 +21,11 @@ services:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL:?required}
       AUTH_SECRET: ${AUTH_SECRET:?required}
+      AUTH_URL: ${AUTH_URL:?required}
+      AUTH_TRUST_HOST: ${AUTH_TRUST_HOST:-true}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?required}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?required}
+      INITIAL_ADMIN_EMAIL: ${INITIAL_ADMIN_EMAIL:?required}
     volumes:
       - ${THUMBNAILS_PATH:?required}:/app/data/thumbnails
       - ${CACHE_PATH:?required}:/app/data/cache
