@@ -87,3 +87,13 @@ model Favorite {
   model   Model3D @relation(fields: [modelId], references: [id], onDelete: Cascade)
   @@id([userId, modelId])
 }
+
+model DriveConnection {
+  id              Int      @id
+  refreshToken    String   @db.Text
+  connectedById   String
+  rootFolderId    String?
+  rootFolderName  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
