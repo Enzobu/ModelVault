@@ -35,6 +35,31 @@ jobs:
       - run: npm run build
         env:
           DATABASE_URL: mysql://modelvault:dummy@localhost:3306/modelvault
+  deploy-pre-prod:
+    name: Deploy pre-prod
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    steps:
+      - name: Deploy pre-prod
+        env:
+          DOKPLOY_PREPROD_API_KEY: ${{ secrets.DOKPLOY_PREPROD_API_KEY }}
+          DOKPLOY_PREPROD_COMPOSE_ID: ${{ secrets.DOKPLOY_PREPROD_COMPOSE_ID }}
+        run: |
+          set -euo pipefail
+          test -n "$DOKPLOY_PREPROD_API_KEY"
+          test -n "$DOKPLOY_PREPROD_COMPOSE_ID"
+          HTTP_CODE=$(curl -sS -o /tmp/deploy-response.txt -w '%{http_code}' \
+            -X POST "https://dokploy-preprod.enzo-palermo.com/api/compose.deploy" \
+            -H 'accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H "x-api-key: $DOKPLOY_PREPROD_API_KEY" \
+            -d "{\"composeId\":\"$DOKPLOY_PREPROD_COMPOSE_ID\"}")
+          echo "HTTP code: $HTTP_CODE"
+          cat /tmp/deploy-response.txt
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            exit 1
+          fi
   deploy-prod:
     name: Deploy prod
     runs-on: ubuntu-latest
