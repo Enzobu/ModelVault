@@ -24,3 +24,15 @@ export async function disconnectDrive() {
   await prisma.driveConnection.deleteMany({ where: { id: 1 } });
   revalidatePath("/admin/drive");
 }
+
+export async function requestDriveSync() {
+  await requireAdmin();
+  const connection = await prisma.driveConnection.findUnique({ where: { id: 1 }, select: { rootFolderId: true } });
+  if (!connection?.rootFolderId) throw new Error("Configure a Drive root folder first");
+  await prisma.driveSyncState.upsert({
+    where: { id: 1 },
+    create: { id: 1, requested: true },
+    update: { requested: true },
+  });
+  revalidatePath("/admin/drive");
+}
