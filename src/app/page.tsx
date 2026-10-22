@@ -4,7 +4,7 @@ import { currentUser, roleAllows } from "@/lib/access";
 import { listModels, parsePage } from "@/lib/models";
 import { signOut } from "@/auth";
 
-type Params = { page?: string; q?: string; category?: string; tag?: string; organization?: string };
+type Params = { page?: string; q?: string; category?: string; tag?: string; organization?: string; favorites?: string };
 export default async function Home({ searchParams }: { searchParams: Promise<Params> }) {
   const user = await currentUser();
   if (!user) redirect("/login");
@@ -18,6 +18,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Par
     categoryId: params.category ?? "",
     tagId: params.tag ?? "",
     organization: params.organization ?? "",
+    favorites: params.favorites === "1",
+    userId: user.id,
   };
   const { count, models, categories, tags, totalPages } = await listModels(page, filters);
   const hrefFor = (p: number) => "/?" + new URLSearchParams({
@@ -25,6 +27,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Par
     ...(filters.categoryId ? { category: filters.categoryId } : {}),
     ...(filters.tagId ? { tag: filters.tagId } : {}),
     ...(filters.organization ? { organization: filters.organization } : {}),
+    ...(filters.favorites ? { favorites: "1" } : {}),
     page: String(p),
   }).toString();
 
@@ -49,6 +52,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Par
       <select name="category" defaultValue={filters.categoryId} aria-label="Filtrer par catégorie" className="min-w-0 rounded-xl border border-current/20 bg-[var(--surface)] px-3 py-3"><option value="">Toutes catégories</option>{categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
       <select name="tag" defaultValue={filters.tagId} aria-label="Filtrer par tag" className="min-w-0 rounded-xl border border-current/20 bg-[var(--surface)] px-3 py-3"><option value="">Tous les tags</option>{tags.map(tag => <option key={tag.id} value={tag.id}>{tag.name}</option>)}</select>
       <select name="organization" defaultValue={filters.organization} aria-label="Filtrer par organisation" className="min-w-0 rounded-xl border border-current/20 bg-[var(--surface)] px-3 py-3"><option value="">Tous les statuts</option><option value="organized">Organisés</option><option value="unorganized">À organiser</option></select>
+      <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="favorites" value="1" defaultChecked={filters.favorites}/>Mes favoris</label>
       <button type="submit" className="rounded-xl bg-[var(--accent)] px-6 py-3 font-semibold text-white hover:opacity-90">Filtrer</button>
     </form>
     {models.length === 0 ? <div className="rounded-2xl border border-dashed border-current/20 px-8 py-16 text-center"><h2 className="text-xl font-semibold">Aucun modèle trouvé</h2><p className="mt-2 opacity-65">Modifie les filtres ou synchronise ton Google Drive.</p><Link href="/" className="mt-4 inline-block underline">Effacer les filtres</Link></div> :
