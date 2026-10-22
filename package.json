@@ -18,7 +18,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "next-auth": "^5.0.0-beta.29",
-    "three": "^0.180.0"
+    "three": "^0.180.0",
+    "archiver": "^7.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -31,6 +32,7 @@
     "prisma": "^6.9.0",
     "tailwindcss": "^4.1.8",
     "typescript": "^5.8.3",
-    "@types/three": "^0.180.0"
+    "@types/three": "^0.180.0",
+    "@types/archiver": "^6.0.2"
   }
 }
