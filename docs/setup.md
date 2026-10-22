@@ -39,3 +39,9 @@ L'autorisation Drive est **distincte de la connexion Google utilisateur**. Elle 
 ### Réconciliation Drive
 
 La synchronisation réutilise les IDs Drive pour les upserts, actualise les noms et fichiers, supprime uniquement les lignes `ModelFile` disparues des dossiers lus avec succès et marque les modèles dont le dossier n'existe plus via `removedFromDrive` (suppression logique : catégories/tags/favoris préservés). Une erreur de liste de dossier n'entraîne pas de suppression de ses fichiers. Le moteur ne vérifie pas encore les synchronisations concurrentes ; ce verrou est prévu avec l'exécution planifiée (#22).
+
+### Synchronisation automatique (phase 2)
+
+Ajouter `DRIVE_SYNC_CRON_SECRET` dans les variables Dokploy avec une valeur aléatoire forte (`openssl rand -base64 32`), commune au service `app` et au service interne `drive-sync-worker`. Le conteneur worker appelle uniquement l'URL interne `http://app:3000/api/internal/drive-sync` toutes les minutes. L'endpoint exige la clé privée ; il ne doit pas être appelé depuis le navigateur. Une fois le dossier racine connecté, l'indexation initiale est déclenchée au premier cycle et les suivantes environ toutes les heures. Un bouton ADMIN permet de demander une exécution anticipée, traitée au prochain passage. Le verrou en base empêche les exécutions concurrentes et permet la reprise d'une exécution interrompue depuis plus de deux heures. Les traitements s'exécutent côté serveur, sans téléchargement des maillages.
+
+Le premier test doit vérifier les compteurs et comparer les nombres de dossiers/fichiers avec le Drive réel avant de développer la galerie.

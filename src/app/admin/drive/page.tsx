@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
-import { disconnectDrive, setRootFolder } from "./actions";
+import { disconnectDrive, setRootFolder, requestDriveSync } from "./actions";
 
 export default async function AdminDrive() {
   const user = await currentUser();
@@ -12,6 +12,7 @@ export default async function AdminDrive() {
     where: { id: 1 },
     select: { rootFolderId: true, rootFolderName: true, updatedAt: true },
   });
+  const sync = await prisma.driveSyncState.findUnique({ where: { id: 1 } });
   return <main className="mx-auto max-w-3xl space-y-8 p-8">
     <Link href="/" className="underline text-sm">Retour</Link>
     <h1 className="text-3xl font-semibold">Google Drive</h1>
@@ -26,6 +27,14 @@ export default async function AdminDrive() {
         </form>
         <form action={disconnectDrive}><button type="submit" className="rounded-lg border px-4 py-2">Déconnecter Drive</button></form>
       </section>}
-    <p className="text-sm opacity-70">L’indexation et la synchronisation seront ajoutées dans la phase 2.</p>
+    {connection?.rootFolderId && <section className="space-y-3 rounded-xl border border-current/10 p-5">
+      <h2 className="text-xl font-semibold">Synchronisation</h2>
+      <p>État : {sync?.running ? "En cours" : sync?.requested ? "En attente" : "Au repos"}</p>
+      <p>Dernier lancement : {sync?.startedAt?.toLocaleString("fr-FR") ?? "Jamais"}</p>
+      <p>Dernier bilan : {sync?.lastResult ?? "Aucun"}</p>
+      {sync?.lastError && <p className="text-red-500">Erreur : {sync.lastError}</p>}
+      <form action={requestDriveSync}><button className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white" type="submit">Synchroniser maintenant</button></form>
+      <p className="text-sm opacity-70">Le worker vérifie les demandes toutes les minutes et relance automatiquement une synchronisation environ chaque heure.</p>
+    </section>}
   </main>;
 }
