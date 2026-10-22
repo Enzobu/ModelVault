@@ -6,8 +6,8 @@ import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { ThreeMFLoader } from "three/addons/loaders/3MFLoader.js";
 
-type Props = { src: string; format: string };
-export default function ModelViewer({ src, format }: Props) {
+type Props = { src: string; format: string; rotation?: [number,number,number]; zoom?: number };
+export default function ModelViewer({ src, format, rotation = [0,0,0], zoom = 1 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -67,13 +67,14 @@ export default function ModelViewer({ src, format }: Props) {
             throw new Error("Format non pris en charge");
         }
         frame.add(object);
+        object.rotation.set(...rotation.map(v => THREE.MathUtils.degToRad(v)) as [number,number,number]);
         const bounds = new THREE.Box3().setFromObject(object);
         const size = bounds.getSize(new THREE.Vector3());
         const center = bounds.getCenter(new THREE.Vector3());
         if (bounds.isEmpty()) throw new Error("La pièce est vide");
         object.position.sub(center);
         const radius = Math.max(size.length() * 0.75, 0.01);
-        camera.position.set(radius, radius * 0.7, radius);
+        camera.position.set(radius / zoom, radius * 0.7 / zoom, radius / zoom);
         camera.near = Math.max(radius / 1000, 0.001);
         camera.far = radius * 100;
         camera.updateProjectionMatrix();
@@ -108,7 +109,7 @@ export default function ModelViewer({ src, format }: Props) {
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [src, format]);
+  }, [src, format, rotation, zoom]);
   return <div className="relative h-[420px] overflow-hidden rounded-xl border border-current/10" ref={container} role="img" aria-label="Prévisualisation interactive de la pièce">
     {error && <p className="absolute bottom-3 left-3 rounded bg-black/80 p-2 text-sm text-white">{error}</p>}
   </div>;
