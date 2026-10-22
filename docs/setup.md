@@ -31,3 +31,7 @@ Le SSO requiert une base initialisée. Vérifier les identifiants OAuth et la co
 6. L'application vérifie que le dossier existe et est accessible avant de mémoriser son ID. Aucun contenu Drive n'est synchronisé pendant cette phase.
 
 L'autorisation Drive est **distincte de la connexion Google utilisateur**. Elle est limitée au rôle ADMIN pour le flux de connexion et la configuration ; les tokens sont chiffrés en AES-256-GCM dans MariaDB.
+
+## Indexation Drive (phase 2)
+
+`src/lib/drive-indexer.ts` fournit `indexDriveModels()` : la racine Drive configurée est parcourue ; chaque sous-dossier immédiat devient un modèle et ses fichiers STL/3MF/OBJ sont indexés par métadonnées (identifiants, noms, taille), sans télécharger les maillages. Les upserts ne remplacent pas les réglages d'organisation utilisateur. La détection des suppressions et la synchronisation planifiée font l'objet des tickets suivants (#21 et #22). L'indexation ne se lance pas encore via l'interface.
