@@ -35,3 +35,7 @@ L'autorisation Drive est **distincte de la connexion Google utilisateur**. Elle 
 ## Indexation Drive (phase 2)
 
 `src/lib/drive-indexer.ts` fournit `indexDriveModels()` : la racine Drive configurée est parcourue ; chaque sous-dossier immédiat devient un modèle et ses fichiers STL/3MF/OBJ sont indexés par métadonnées (identifiants, noms, taille), sans télécharger les maillages. Les upserts ne remplacent pas les réglages d'organisation utilisateur. La détection des suppressions et la synchronisation planifiée font l'objet des tickets suivants (#21 et #22). L'indexation ne se lance pas encore via l'interface.
+
+### Réconciliation Drive
+
+La synchronisation réutilise les IDs Drive pour les upserts, actualise les noms et fichiers, supprime uniquement les lignes `ModelFile` disparues des dossiers lus avec succès et marque les modèles dont le dossier n'existe plus via `removedFromDrive` (suppression logique : catégories/tags/favoris préservés). Une erreur de liste de dossier n'entraîne pas de suppression de ses fichiers. Le moteur ne vérifie pas encore les synchronisations concurrentes ; ce verrou est prévu avec l'exécution planifiée (#22).
