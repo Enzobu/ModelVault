@@ -10,6 +10,7 @@ type Props = { src: string; format: string; rotation?: [number,number,number]; z
 export default function ModelViewer({ src, format, rotation = [0,0,0], zoom = 1 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const [error, setError] = useState("");
+  const [rotationX, rotationY, rotationZ] = rotation;
   useEffect(() => {
     const host = container.current;
     if (!host) return;
@@ -67,7 +68,7 @@ export default function ModelViewer({ src, format, rotation = [0,0,0], zoom = 1 
             throw new Error("Format non pris en charge");
         }
         frame.add(object);
-        object.rotation.set(THREE.MathUtils.degToRad(rotation[0]), THREE.MathUtils.degToRad(rotation[1]), THREE.MathUtils.degToRad(rotation[2]));
+        object.rotation.set(THREE.MathUtils.degToRad(rotationX), THREE.MathUtils.degToRad(rotationY), THREE.MathUtils.degToRad(rotationZ));
         const bounds = new THREE.Box3().setFromObject(object);
         const size = bounds.getSize(new THREE.Vector3());
         const center = bounds.getCenter(new THREE.Vector3());
