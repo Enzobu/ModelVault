@@ -1,0 +1,1 @@
+ALTER TABLE `Model3D` ADD COLUMN `removedFromDrive` BOOLEAN NOT NULL DEFAULT false;

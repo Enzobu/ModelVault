@@ -53,6 +53,7 @@ export async function indexDriveModels(): Promise<IndexStats> {
   const folders = (await listDriveChildren(connection.rootFolderId, token))
     .filter(item => item.mimeType === folderMime);
   const stats: IndexStats = { folders: folders.length, models: 0, files: 0, ignored: 0, errors: 0 };
+  const seenFolderIds = folders.map(folder => folder.id);
   for (const folder of folders) {
     try {
       const children = await listDriveChildren(folder.id, token);
@@ -63,8 +64,8 @@ export async function indexDriveModels(): Promise<IndexStats> {
       await prisma.$transaction(async tx => {
         const model = await tx.model3D.upsert({
           where: { driveFolderId: folder.id },
-          create: { driveFolderId: folder.id, driveName: folder.name },
-          update: { driveName: folder.name },
+          create: { driveFolderId: folder.id, driveName: folder.name, removedFromDrive: false },
+          update: { driveName: folder.name, removedFromDrive: false },
           select: { id: true },
         });
         for (const { item, format } of files) {
@@ -80,6 +81,9 @@ export async function indexDriveModels(): Promise<IndexStats> {
             },
           });
         }
+        await tx.modelFile.deleteMany({
+          where: { modelId: model.id, googleFileId: { notIn: files.map(({ item }) => item.id) } },
+        });
       });
       stats.models++;
       stats.files += files.length;
@@ -88,5 +92,10 @@ export async function indexDriveModels(): Promise<IndexStats> {
       console.error("Failed to index Drive folder", folder.id, error instanceof Error ? error.message : "unknown error");
     }
   }
+  // Only reconcile missing folders after a complete, successful root listing.
+  await prisma.model3D.updateMany({
+    where: { driveFolderId: { notIn: seenFolderIds } },
+    data: { removedFromDrive: true },
+  });
   return stats;
 }
