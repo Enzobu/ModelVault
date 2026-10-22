@@ -4,7 +4,7 @@ import { driveAccessToken } from "@/lib/drive";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string; fileId: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; fileId: string }> }) {
   const viewer = await currentUser();
   if (!viewer || !roleAllows(viewer.role, "USER") || !viewer.onboardingCompleted) {
     return new Response("Forbidden", { status: 403 });
@@ -24,6 +24,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       "Content-Type": "application/octet-stream",
       "Cache-Control": "private, no-store",
       "X-Content-Type-Options": "nosniff",
+      ...(request.nextUrl.searchParams.has("download") ? {
+        "Content-Disposition": "attachment; filename*=UTF-8''" + encodeURIComponent(file.filename),
+      } : {}),
     },
   });
 }
