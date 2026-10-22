@@ -67,7 +67,7 @@ export default function ModelViewer({ src, format, rotation = [0,0,0], zoom = 1 
             throw new Error("Format non pris en charge");
         }
         frame.add(object);
-        object.rotation.set(...rotation.map(v => THREE.MathUtils.degToRad(v)) as [number,number,number]);
+        object.rotation.set(THREE.MathUtils.degToRad(rotation[0]), THREE.MathUtils.degToRad(rotation[1]), THREE.MathUtils.degToRad(rotation[2]));
         const bounds = new THREE.Box3().setFromObject(object);
         const size = bounds.getSize(new THREE.Vector3());
         const center = bounds.getCenter(new THREE.Vector3());
@@ -109,7 +109,7 @@ export default function ModelViewer({ src, format, rotation = [0,0,0], zoom = 1 
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [src, format, rotation, zoom]);
+  }, [src, format, rotation[0], rotation[1], rotation[2], zoom]);
   return <div className="relative h-[420px] overflow-hidden rounded-xl border border-current/10" ref={container} role="img" aria-label="Prévisualisation interactive de la pièce">
     {error && <p className="absolute bottom-3 left-3 rounded bg-black/80 p-2 text-sm text-white">{error}</p>}
   </div>;
