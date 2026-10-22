@@ -13,6 +13,6 @@ test("indexing uses Drive metadata, pagination and read-only access", () => {
 test("model indexing is repeatable and does not overwrite organization choices", () => {
   assert.match(source, /model3D\.upsert/);
   assert.match(source, /modelFile\.upsert/);
-  assert.match(source, /update: \{ driveName: folder\.name \}/);
+  assert.match(source, /update: \{ driveName: folder\.name, removedFromDrive: false \}/);
   assert.match(source, /\$transaction/);
 });
