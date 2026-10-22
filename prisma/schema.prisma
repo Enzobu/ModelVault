@@ -44,6 +44,11 @@ model Model3D {
   organized     Boolean     @default(false)
   isHidden      Boolean     @default(false)
   removedFromDrive Boolean   @default(false)
+  previewFileId String?
+  previewRotationX Float @default(0)
+  previewRotationY Float @default(0)
+  previewRotationZ Float @default(0)
+  previewZoom Float @default(1)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   files         ModelFile[]

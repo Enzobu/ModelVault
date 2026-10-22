@@ -26,7 +26,7 @@ export default async function ModelDetail({ params }: { params: Promise<{ id: st
       {model.description && <p className="whitespace-pre-wrap">{model.description}</p>}
       {model.tags.length > 0 && <p className="text-sm opacity-70">Tags : {model.tags.map(({ tag }) => tag.name).join(", ")}</p>}
     </div>
-    {model.files.length > 0 && <section className="space-y-3"><h2 className="text-xl font-semibold">Aperçu 3D</h2><ModelViewer key={model.files[0].id} src={"/api/models/" + model.id + "/files/" + model.files[0].id + "/content"} format={model.files[0].format} /></section>}
+    {model.files.length > 0 && <section className="space-y-3"><h2 className="text-xl font-semibold">Aperçu 3D</h2><ModelViewer key={(model.files.find(file => file.id === model.previewFileId) ?? model.files[0]).id} src={"/api/models/" + model.id + "/files/" + (model.files.find(file => file.id === model.previewFileId) ?? model.files[0]).id + "/content"} format={(model.files.find(file => file.id === model.previewFileId) ?? model.files[0]).format} rotation={[model.previewRotationX, model.previewRotationY, model.previewRotationZ]} zoom={model.previewZoom} /></section>}
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl font-semibold">Fichiers ({model.files.length})</h2>{model.files.length > 0 && <a className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white" href={"/api/models/" + model.id + "/download"}>Télécharger le ZIP</a>}</div>
       {model.files.length === 0 ? <p className="opacity-70">Aucun fichier 3D indexé dans ce dossier.</p> :

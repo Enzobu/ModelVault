@@ -20,6 +20,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     <header className="flex flex-wrap items-center justify-between gap-5">
       <div><h1 className="text-3xl font-semibold">ModelVault</h1><p className="text-sm opacity-70">{count} modèles disponibles</p></div>
       <nav className="flex flex-wrap gap-4 text-sm">
+        {roleAllows(user.role, "EDITOR") && <Link href="/admin/organize" className="underline">À organiser</Link>}
         {user.role === "ADMIN" && <><Link href="/admin/users" className="underline">Utilisateurs</Link><Link href="/admin/drive" className="underline">Google Drive</Link></>}
         <form action={async () => { "use server"; await signOut({ redirectTo: "/login" }); }}><button className="underline" type="submit">Déconnexion</button></form>
       </nav>
