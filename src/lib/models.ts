@@ -7,7 +7,7 @@ export function parsePage(raw?: string): number {
   return Number.isSafeInteger(page) && page > 0 ? Math.min(page, 100000) : 1;
 }
 
-export type ModelFilters = { query: string; categoryId: string; tagId: string; organization: string };
+export type ModelFilters = { query: string; categoryId: string; tagId: string; organization: string; favorites: boolean; userId: string };
 
 export async function listModels(page: number, filters: ModelFilters) {
   const search = filters.query.trim().slice(0, 100);
@@ -15,6 +15,7 @@ export async function listModels(page: number, filters: ModelFilters) {
     removedFromDrive: false,
     isHidden: false,
     ...(search ? { OR: [{ driveName: { contains: search } }, { displayName: { contains: search } }] } : {}),
+    ...(filters.favorites ? { favorites: { some: { userId: filters.userId } } } : {}),
     ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
     ...(filters.tagId ? { tags: { some: { tagId: filters.tagId } } } : {}),
     ...(filters.organization === "organized" ? { organized: true } : {}),
