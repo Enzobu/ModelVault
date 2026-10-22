@@ -1,4 +1,4 @@
-import Link from "next/link";
+import AdminNav from "@/components/admin-nav";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
@@ -12,11 +12,11 @@ export default async function AdminUsers() {
     orderBy: [{ role: "asc" }, { createdAt: "desc" }],
     select: { id: true, email: true, displayName: true, role: true, createdAt: true },
   });
-  return <main className="mx-auto max-w-4xl space-y-8 p-8">
-    <div><Link className="text-sm underline" href="/">Retour</Link><h1 className="mt-5 text-3xl font-semibold">Utilisateurs</h1>
+  return <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-8">
+    <div><AdminNav /><h1 className="mt-5 text-3xl font-semibold">Utilisateurs</h1>
       <p className="opacity-70">{users.filter(u => u.role === "PENDING").length} demande(s) en attente</p></div>
     <div className="space-y-4">
-      {users.map(user => <div key={user.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-current/10 p-4">
+      {users.map(user => <div key={user.id} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-current/10 bg-current/[0.025] p-5">
         <div><p className="font-semibold">{user.displayName ?? user.email}</p><p className="text-sm opacity-70">{user.email} · {user.role}</p></div>
         <form action={setUserRole} className="flex flex-wrap gap-2">
           <input type="hidden" name="userId" value={user.id} />

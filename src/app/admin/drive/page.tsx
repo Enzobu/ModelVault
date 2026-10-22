@@ -1,4 +1,4 @@
-import Link from "next/link";
+import AdminNav from "@/components/admin-nav";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
@@ -13,12 +13,12 @@ export default async function AdminDrive() {
     select: { rootFolderId: true, rootFolderName: true, updatedAt: true },
   });
   const sync = await prisma.driveSyncState.findUnique({ where: { id: 1 } });
-  return <main className="mx-auto max-w-3xl space-y-8 p-8">
-    <Link href="/" className="underline text-sm">Retour</Link>
+  return <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-8">
+    <AdminNav />
     <h1 className="text-3xl font-semibold">Google Drive</h1>
     <p className="text-sm opacity-70">Connexion réservée aux administrateurs. Autorisation Drive en lecture seule, indépendante du SSO des utilisateurs.</p>
     {!connection ? <a className="inline-block rounded-lg bg-[var(--accent)] px-5 py-3 text-white" href="/api/admin/drive/connect">Connecter Google Drive</a> :
-      <section className="space-y-5">
+      <section className="space-y-5 rounded-2xl border border-current/10 p-5">
         <p>Drive connecté. {connection.rootFolderName ? "Dossier : " + connection.rootFolderName : "Sélectionnez le dossier racine."}</p>
         <form action={setRootFolder} className="space-y-3">
           <label htmlFor="folderId" className="block">Identifiant ou URL du dossier racine Drive</label>
@@ -27,7 +27,7 @@ export default async function AdminDrive() {
         </form>
         <form action={disconnectDrive}><button type="submit" className="rounded-lg border px-4 py-2">Déconnecter Drive</button></form>
       </section>}
-    {connection?.rootFolderId && <section className="space-y-3 rounded-xl border border-current/10 p-5">
+    {connection?.rootFolderId && <section className="space-y-3 rounded-2xl border border-current/10 p-6">
       <h2 className="text-xl font-semibold">Synchronisation</h2>
       <p>État : {sync?.running ? "En cours" : sync?.requested ? "En attente" : "Au repos"}</p>
       <p>Dernier lancement : {sync?.startedAt?.toLocaleString("fr-FR") ?? "Jamais"}</p>
