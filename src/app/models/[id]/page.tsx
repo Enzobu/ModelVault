@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ModelViewer from "@/components/model-viewer";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { currentUser, roleAllows } from "@/lib/access";
@@ -25,6 +26,7 @@ export default async function ModelDetail({ params }: { params: Promise<{ id: st
       {model.description && <p className="whitespace-pre-wrap">{model.description}</p>}
       {model.tags.length > 0 && <p className="text-sm opacity-70">Tags : {model.tags.map(({ tag }) => tag.name).join(", ")}</p>}
     </div>
+    {model.files.length > 0 && <section className="space-y-3"><h2 className="text-xl font-semibold">Aperçu 3D</h2><ModelViewer key={model.files[0].id} src={"/api/models/" + model.id + "/files/" + model.files[0].id + "/content"} format={model.files[0].format} /></section>}
     <section className="space-y-4">
       <h2 className="text-xl font-semibold">Fichiers ({model.files.length})</h2>
       {model.files.length === 0 ? <p className="opacity-70">Aucun fichier 3D indexé dans ce dossier.</p> :
@@ -34,6 +36,6 @@ export default async function ModelDetail({ params }: { params: Promise<{ id: st
             <span className="text-sm uppercase opacity-70">{file.format} {file.sizeBytes == null ? "" : "· " + (Number(file.sizeBytes) / (1024 * 1024)).toFixed(2) + " Mo"}</span>
           </li>)}</ul>}
     </section>
-    <p className="text-sm opacity-60">L’aperçu 3D et les téléchargements arrivent dans les prochains tickets.</p>
+    <p className="text-sm opacity-60">Les téléchargements et les miniatures automatiques arrivent dans les prochains tickets.</p>
   </main>;
 }
