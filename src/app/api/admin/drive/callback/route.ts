@@ -37,5 +37,5 @@ export async function GET(request: NextRequest) {
     create: { id: 1, refreshToken: encryptToken(tokens.refresh_token), connectedById: admin.id },
     update: { refreshToken: encryptToken(tokens.refresh_token), connectedById: admin.id },
   });
-  return NextResponse.redirect(new URL("/admin/drive?connected=1", request.url));
+  return NextResponse.redirect(new URL("/admin/drive?connected=1", process.env.AUTH_URL ?? driveRedirectUri()));
 }
