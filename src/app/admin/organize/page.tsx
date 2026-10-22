@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AdminNav from "@/components/admin-nav";
 import { redirect } from "next/navigation";
 import { currentUser, roleAllows } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
@@ -20,7 +21,7 @@ export default async function Organize({ searchParams }: { searchParams: Promise
     prisma.tag.findMany({ orderBy: { name: "asc" } }),
   ]);
   return <main className="mx-auto max-w-5xl space-y-8 p-6 md:p-10">
-    <Link href="/" className="underline">Retour à la galerie</Link>
+    <AdminNav editor={viewer.role !== "ADMIN"} />
     <header><h1 className="text-3xl font-semibold">À organiser</h1><p className="opacity-70">{total} modèle(s) à classer</p></header>
     <section className="grid gap-4 md:grid-cols-2">
       <form action={createCategory} className="flex gap-2"><input name="name" required maxLength={80} placeholder="Nouvelle catégorie" className="min-w-0 flex-1 rounded-lg border border-current/20 bg-transparent p-3" /><button className="rounded-lg bg-[var(--accent)] px-3 text-white">Ajouter</button></form>
@@ -32,7 +33,7 @@ export default async function Organize({ searchParams }: { searchParams: Promise
       <select name="categoryId" aria-label="Catégorie des modèles sélectionnés" className="rounded-lg border border-current/20 bg-transparent p-2"><option value="">Conserver les catégories</option>{categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
       <button className="ml-3 rounded-lg bg-[var(--accent)] px-4 py-2 text-white">Marquer comme organisés</button>
     </form>
-    <div className="space-y-5">{models.map(model => <form key={model.id} action={saveModelOrganization} className="space-y-4 rounded-2xl border border-current/15 p-5">
+    <div className="space-y-5">{models.map(model => <form key={model.id} action={saveModelOrganization} className="space-y-4 rounded-2xl border border-current/15 bg-current/[0.025] p-5">
       <input type="hidden" name="modelId" value={model.id}/>
       <div><Link className="font-semibold underline" href={"/models/" + model.id}>{model.driveName}</Link><p className="text-sm opacity-60">{model.files.length} fichier(s)</p></div>
       <label className="block text-sm">Nom affiché<input name="displayName" defaultValue={model.displayName ?? ""} placeholder={model.driveName} maxLength={180} className="mt-1 w-full rounded-lg border border-current/20 bg-transparent p-2"/></label>
