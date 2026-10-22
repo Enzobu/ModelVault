@@ -27,6 +27,7 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?required}
       INITIAL_ADMIN_EMAIL: ${INITIAL_ADMIN_EMAIL:?required}
       GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY: ${GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY:-}
+      DRIVE_SYNC_CRON_SECRET: ${DRIVE_SYNC_CRON_SECRET:-}
     volumes:
       - ${THUMBNAILS_PATH:?required}:/app/data/thumbnails
       - ${CACHE_PATH:?required}:/app/data/cache
@@ -35,3 +36,23 @@ services:
         condition: service_healthy
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
+
+  drive-sync-worker:
+    image: curlimages/curl:8.11.1
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
+    environment:
+      DRIVE_SYNC_CRON_SECRET: ${DRIVE_SYNC_CRON_SECRET:-}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          if [ -n "$$DRIVE_SYNC_CRON_SECRET" ]; then
+            curl -sS --connect-timeout 5 --max-time 1800 -X POST \
+              http://app:3000/api/internal/drive-sync \
+              -H "x-sync-secret: $$DRIVE_SYNC_CRON_SECRET" || true
+          fi
+          sleep 60
+        done
