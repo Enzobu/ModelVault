@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ModelViewer from "@/components/model-viewer";
+import { toggleFavorite } from "./favorite-actions";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { currentUser, roleAllows } from "@/lib/access";
@@ -13,7 +14,7 @@ export default async function ModelDetail({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const model = await prisma.model3D.findFirst({
     where: { id, isHidden: false, removedFromDrive: false },
-    include: { files: { orderBy: { filename: "asc" } }, category: true, tags: { include: { tag: true } } },
+    include: { files: { orderBy: { filename: "asc" } }, category: true, tags: { include: { tag: true } }, favorites: { where: { userId: viewer.id }, select: { userId: true } } },
   });
   if (!model) notFound();
 
@@ -21,7 +22,9 @@ export default async function ModelDetail({ params }: { params: Promise<{ id: st
     <Link href="/" className="underline underline-offset-4">Retour à la galerie</Link>
     <div className="space-y-2">
       <p className="text-sm opacity-70">{model.organized ? "Organisé" : "À organiser"}</p>
-      <h1 className="break-words text-3xl font-semibold">{model.displayName ?? model.driveName}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4"><h1 className="break-words text-3xl font-semibold">{model.displayName ?? model.driveName}</h1>
+        <form action={toggleFavorite}><input type="hidden" name="modelId" value={model.id}/><button className="rounded-xl border border-current/20 px-4 py-2 hover:border-[var(--accent)]" type="submit" aria-label={model.favorites.length ? "Retirer des favoris" : "Ajouter aux favoris"}>{model.favorites.length ? "★ Dans mes favoris" : "☆ Ajouter aux favoris"}</button></form>
+      </div>
       {model.category && <p className="opacity-70">Catégorie : {model.category.name}</p>}
       {model.description && <p className="whitespace-pre-wrap">{model.description}</p>}
       {model.tags.length > 0 && <p className="text-sm opacity-70">Tags : {model.tags.map(({ tag }) => tag.name).join(", ")}</p>}
