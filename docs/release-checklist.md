@@ -48,3 +48,18 @@ Avant une publication, conserver les références image/commit et une sauvegarde
 ## Décision finale
 
 Compléter cette liste, valider les tickets ouverts #21/#22/#24/#25/#30, obtenir les mesures et l'accord explicite avant toute PR `dev → main`. Aucune action automatique vers `main` n'est autorisée par cette checklist.
+
+## Sauvegardes programmées (activation optionnelle)
+
+Le dépôt fournit désormais le profil Docker Compose `backups` avec un conteneur MariaDB client qui crée un dump cohérent chaque jour et conserve 14 jours. Il **n'est pas démarré par défaut** : cela évite d'activer des sauvegardes en clair sans choix du stockage cible.
+
+1. Configurer un chemin sûr hors dépôt dans `MARIADB_BACKUP_PATH` (montage privé avec permissions restreintes).
+2. Démarrer le profil : `docker compose --profile backups up -d database-backup` ou activer le profil dans Dokploy.
+3. Vérifier la présence d'un nouveau fichier SQL et surveiller les logs du service. Stocker une copie chiffrée hors machine, avec rétention et alertes ; un disque local ne suffit pas.
+4. Tester la restauration sur une **instance MariaDB isolée**, jamais sur la base active. Valider que l'authentification, les préférences et le dossier Drive fonctionnent toujours après restauration (la clé de chiffrement Drive doit être préservée séparément).
+
+## Diagnostics et limites
+
+La page admin `/admin/diagnostics` expose les compteurs de modèles/fichiers, la taille logique indexée, le nombre de miniatures stockées, la mémoire du processus, l'espace libre et la durée de la dernière synchro. Les miniatures âgées de plus de 45 jours sont nettoyées au passage de la synchro ; elles seront régénérées à la demande. Les ZIP sont plafonnés à 500 pièces et 1,5 Go selon les métadonnées Drive, et un utilisateur ne peut posséder que cinq tickets Bridge actifs.
+
+Ces contrôles sont **des protections applicatives, pas une validation de production**. La restauration, les droits du volume thumbnails, le chargement des STL/OBJ/3MF et le build Windows doivent encore être testés lors de la passe complète demandée. Ne fusionner sur `main` qu'après ces tests et un accord explicite.
