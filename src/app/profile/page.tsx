@@ -7,6 +7,8 @@ import { saveProfile, uploadAvatar, resetAvatar } from "./actions";
 import { signOut } from "@/auth";
 import SiteHeader from "@/components/site-header";
 import ProfileAvatar from "@/components/profile-avatar";
+import SegmentedChoice from "@/components/segmented-choice";
+import PalettePicker from "@/components/palette-picker";
 
 export default async function Profile() {
   const user=await currentUser();
@@ -36,18 +38,9 @@ export default async function Profile() {
       <section className="ui-surface space-y-4 rounded-xl p-5">
         <h2 className="text-base font-semibold">Apparence</h2>
         <form action={saveAppearance} className="space-y-4">
-          <fieldset><legend className="mb-2 text-xs font-semibold">Thème</legend><div className="flex flex-wrap gap-3 text-xs">
-            {([["SYSTEM","Système"],["LIGHT","Clair"],["DARK","Sombre"]] as const).map(([value,label])=><label key={value} className="flex items-center gap-1"><input type="radio" name="theme" value={value} defaultChecked={user.theme===value}/>{label}</label>)}
-          </div></fieldset>
-          <fieldset><legend className="mb-2 text-xs font-semibold">Palette</legend><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {Object.entries(paletteColors).map(([name,colors])=><label key={name} className="cursor-pointer rounded-md border border-[var(--border)] p-2 text-xs capitalize">
-              <input type="radio" name="palette" value={name} defaultChecked={user.colorPalette===name} className="mr-1"/>{name}
-              <span className="mt-2 flex overflow-hidden rounded-sm">{colors.map(color=><span key={color} className="h-3 flex-1" style={{background:color}}/>)}</span>
-            </label>)}
-          </div></fieldset>
-          <fieldset><legend className="mb-2 text-xs font-semibold">Intensité</legend><div className="flex flex-wrap gap-3 text-xs">
-            {([["LIGHT","Claire"],["STANDARD","Normale"],["DARK","Foncée"]] as const).map(([value,label])=><label key={value} className="flex items-center gap-1"><input type="radio" name="variant" value={value} defaultChecked={user.colorVariant===value}/>{label}</label>)}
-          </div></fieldset>
+          <SegmentedChoice name="theme" label="Thème" defaultValue={user.theme} options={[["SYSTEM","Système"],["LIGHT","Clair"],["DARK","Sombre"]]}/>
+          <PalettePicker palettes={paletteColors} defaultValue={user.colorPalette}/>
+          <SegmentedChoice name="variant" label="Intensité" defaultValue={user.colorVariant} options={[["LIGHT","Claire"],["STANDARD","Normale"],["DARK","Foncée"]]}/>
           <button className="rounded-md bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white">Enregistrer l’apparence</button>
         </form>
       </section>
