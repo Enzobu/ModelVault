@@ -110,7 +110,7 @@ export default function ModelViewer({ src, format, rotation = [0,0,0], zoom = 1 
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [src, format, rotation[0], rotation[1], rotation[2], zoom]);
+  }, [src, format, rotationX, rotationY, rotationZ, zoom]);
   return <div className="relative h-[420px] overflow-hidden rounded-xl border border-current/10" ref={container} role="img" aria-label="Prévisualisation interactive de la pièce">
     {error && <p className="absolute bottom-3 left-3 rounded bg-black/80 p-2 text-sm text-white">{error}</p>}
   </div>;
