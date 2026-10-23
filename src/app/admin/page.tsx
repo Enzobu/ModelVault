@@ -1,3 +1,4 @@
+import SiteHeader from "@/components/site-header";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/access";
@@ -22,7 +23,8 @@ export default async function AdminDashboard() {
     { label: "Utilisateurs", value: users, href: "/admin/users" },
     { label: "Accès en attente", value: pending, href: "/admin/users" },
   ];
-  return <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-8">
+  return <main className="admin-shell mx-auto max-w-[1500px] space-y-5 px-4 pb-8 sm:px-6 lg:px-8">
+    <SiteHeader user={viewer}/>
     <AdminNav />
     <header className="space-y-2"><p className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">Administration</p>
       <h1 className="text-3xl font-bold">Tableau de bord</h1><p className="opacity-65">Pilotage de ta bibliothèque ModelVault</p></header>
