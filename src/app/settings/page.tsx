@@ -12,7 +12,7 @@ export default async function Settings() {
     <Link href="/" className="text-sm underline">← Bibliothèque</Link>
     <header><p className="text-sm font-semibold uppercase tracking-widest text-[var(--accent)]">Personnalisation</p>
       <h1 className="mt-2 text-3xl font-bold">Apparence</h1>
-      <p className="mt-1 ui-muted">Retrouve la même palette sur la galerie, les fiches et l'administration.</p></header>
+      <p className="mt-1 ui-muted">Retrouve la même palette sur la galerie, les fiches et l’administration.</p></header>
     <form action={saveAppearance} className="ui-surface space-y-7 rounded-2xl p-5 sm:p-7">
       <fieldset className="space-y-3"><legend className="font-semibold">Thème</legend>
         <div className="grid grid-cols-3 gap-2">{[["SYSTEM","Système"],["LIGHT","Clair"],["DARK","Sombre"]].map(([value,title]) =>
