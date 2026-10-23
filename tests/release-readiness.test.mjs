@@ -17,5 +17,5 @@ test("production release is explicitly gated by preprod validation",()=>{
  const guide=read("docs/release-checklist.md");
  assert.match(guide,/NON VALIDÉ/);
  assert.match(guide,/restauration testée/);
- assert.match(guide,/ne pas fusionner/);
+ assert.match(guide,/ne pas fusionner/i);
 });
