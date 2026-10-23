@@ -13,6 +13,12 @@ export async function POST(request: Request) {
     select: { id: true },
   });
   if (!model) return new Response("Model not found", { status: 404 });
+  const now = new Date();
+  const activeTickets = await prisma.bridgeTicket.count({
+    where: { userId: viewer.id, consumedAt: null, expiresAt: { gt: now } },
+  });
+  if (activeTickets >= 5) return new Response("Too many pending requests", { status: 429 });
+  await prisma.bridgeTicket.deleteMany({ where: { expiresAt: { lt: new Date(now.getTime() - 24 * 60 * 60 * 1000) } } });
   const token = randomBytes(32).toString("base64url");
   const tokenHash = createHash("sha256").update(token).digest("hex");
   await prisma.bridgeTicket.create({
