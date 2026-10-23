@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import * as THREE from "three";
 import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
@@ -113,7 +114,7 @@ export default function ModelThumbnail(props: Props) {
     return () => abort.abort();
   }, [visible, modelId, fileId, format, rx, ry, rz, zoom]);
   return <div ref={host} className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-current/[0.05]">
-    {src && !failed ? <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(true)}/> :
+    {src && !failed ? <Image src={src} alt="" width={320} height={240} unoptimized className="h-full w-full object-cover" onError={() => setFailed(true)}/> :
       <div aria-hidden="true" className="flex flex-col items-center gap-2 text-current/40">
         <svg viewBox="0 0 48 48" className="size-12" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M24 4 5 15v19l19 11 19-11V15L24 4Z"/><path d="M5 15 24 26l19-11M24 26v19"/>

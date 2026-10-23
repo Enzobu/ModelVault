@@ -1,4 +1,5 @@
 import Link from "next/link";
+import GalleryFilters from "@/components/gallery-filters";
 import ModelThumbnail from "@/components/model-thumbnail";
 import { redirect } from "next/navigation";
 import { currentUser, roleAllows } from "@/lib/access";
@@ -38,28 +39,22 @@ export default async function Home({ searchParams }: { searchParams: Promise<Par
       <nav aria-label="Navigation principale" className="flex flex-wrap items-center gap-3 text-sm sm:gap-5">
         <Link href="/" className="font-semibold">Bibliothèque</Link>
         {roleAllows(user.role, "EDITOR") && <Link href="/admin/organize" className="hover:underline">À organiser</Link>}
-        {user.role === "ADMIN" && <><Link href="/admin/users" className="hover:underline">Utilisateurs</Link><Link href="/admin/drive" className="hover:underline">Drive</Link></>}
+        {user.role === "ADMIN" && <Link href="/admin" className="hover:underline">Administration</Link>}
+        <Link href="/settings" className="hover:underline">Apparence</Link>
         <form action={async () => { "use server"; await signOut({ redirectTo: "/login" }); }}><button className="underline" type="submit">Déconnexion</button></form>
       </nav>
     </header>
     <section className="space-y-2">
       <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">Bibliothèque 3D</p>
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Explore tes modèles</h1>
-      <p className="opacity-65">{count} modèles trouvés · STL, 3MF et OBJ</p>
+      <p className="ui-muted">{count} modèles trouvés · STL, 3MF et OBJ</p>
     </section>
-    <form action="/" method="GET" className="grid gap-3 rounded-2xl border border-current/10 bg-current/[0.025] p-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto]">
-      <input aria-label="Rechercher un modèle" name="q" defaultValue={filters.query} placeholder="Rechercher un modèle..." maxLength={100}
-        className="w-full min-w-0 rounded-xl border border-current/20 bg-transparent px-4 py-3" />
-      <select name="category" defaultValue={filters.categoryId} aria-label="Filtrer par catégorie" className="min-w-0 rounded-xl border border-current/20 bg-[var(--surface)] px-3 py-3"><option value="">Toutes catégories</option>{categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
-      <select name="tag" defaultValue={filters.tagId} aria-label="Filtrer par tag" className="min-w-0 rounded-xl border border-current/20 bg-[var(--surface)] px-3 py-3"><option value="">Tous les tags</option>{tags.map(tag => <option key={tag.id} value={tag.id}>{tag.name}</option>)}</select>
-      <select name="organization" defaultValue={filters.organization} aria-label="Filtrer par organisation" className="min-w-0 rounded-xl border border-current/20 bg-[var(--surface)] px-3 py-3"><option value="">Tous les statuts</option><option value="organized">Organisés</option><option value="unorganized">À organiser</option></select>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="favorites" value="1" defaultChecked={filters.favorites}/>Mes favoris</label>
-      <button type="submit" className="rounded-xl bg-[var(--accent)] px-6 py-3 font-semibold text-white hover:opacity-90">Filtrer</button>
-    </form>
+    <GalleryFilters initial={filters} categories={categories} tags={tags} />
+    <div aria-live="polite" className="flex items-center justify-between gap-3"><h2 className="text-xl font-bold">Les modèles</h2><span className="text-sm ui-muted">{count} résultat(s)</span></div>
     {models.length === 0 ? <div className="rounded-2xl border border-dashed border-current/20 px-8 py-16 text-center"><h2 className="text-xl font-semibold">Aucun modèle trouvé</h2><p className="mt-2 opacity-65">Modifie les filtres ou synchronise ton Google Drive.</p><Link href="/" className="mt-4 inline-block underline">Effacer les filtres</Link></div> :
       <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {models.map(model => <li key={model.id}>
-          <Link href={"/models/" + encodeURIComponent(model.id)} className="group block h-full overflow-hidden rounded-2xl border border-current/10 bg-current/[0.025] shadow-sm transition-all hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
+          <Link href={"/models/" + encodeURIComponent(model.id)} className="group block h-full overflow-hidden rounded-2xl border border-current/10 bg-[var(--panel)] shadow-sm transition-all hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
             {model.files.length > 0 ? <ModelThumbnail modelId={model.id} fileId={(model.files.find(f => f.id === model.previewFileId) ?? model.files[0]).id} format={(model.files.find(f => f.id === model.previewFileId) ?? model.files[0]).format} rotation={[model.previewRotationX, model.previewRotationY, model.previewRotationZ]} zoom={model.previewZoom} /> : <div className="flex aspect-[4/3] items-center justify-center opacity-50">Aucune pièce</div>}
             <div className="space-y-2 p-4">
               <p className="truncate text-lg font-semibold">{model.displayName ?? model.driveName}</p>

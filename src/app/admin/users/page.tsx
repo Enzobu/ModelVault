@@ -1,4 +1,5 @@
 import AdminNav from "@/components/admin-nav";
+import SubmitButton from "@/components/submit-button";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
@@ -23,7 +24,7 @@ export default async function AdminUsers() {
           <select name="role" defaultValue={user.role} className="rounded-lg border border-current/20 bg-transparent px-3 py-2" aria-label={"Rôle de " + user.email}>
             {["PENDING","USER","EDITOR","ADMIN"].map(role => <option key={role} value={role} className="text-black">{role}</option>)}
           </select>
-          <button type="submit" className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white">Enregistrer</button>
+          <SubmitButton className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white">Enregistrer</SubmitButton>
         </form>
       </div>)}
     </div>
