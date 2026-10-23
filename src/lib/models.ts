@@ -28,7 +28,7 @@ export async function listModels(page: number, filters: ModelFilters) {
       orderBy: [{ driveName: "asc" }, { id: "asc" }],
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
-      select: { id: true, driveName: true, displayName: true, organized: true, files: { select: { id: true } }, category: { select: { name: true } } },
+      select: { id: true, driveName: true, displayName: true, organized: true, previewFileId: true, previewRotationX: true, previewRotationY: true, previewRotationZ: true, previewZoom: true, files: { orderBy: { filename: "asc" }, select: { id: true, format: true } }, category: { select: { name: true } } },
     }),
     prisma.category.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.tag.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),

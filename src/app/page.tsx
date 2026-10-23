@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ModelThumbnail from "@/components/model-thumbnail";
 import { redirect } from "next/navigation";
 import { currentUser, roleAllows } from "@/lib/access";
 import { listModels, parsePage } from "@/lib/models";
@@ -59,10 +60,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Par
       <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {models.map(model => <li key={model.id}>
           <Link href={"/models/" + encodeURIComponent(model.id)} className="group block h-full overflow-hidden rounded-2xl border border-current/10 bg-current/[0.025] shadow-sm transition-all hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
-            <div className="flex aspect-[4/3] flex-col items-center justify-center gap-3 bg-current/[0.04] text-current/40">
-              <svg aria-hidden="true" viewBox="0 0 48 48" className="size-16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M24 4 5 15v19l19 11 19-11V15L24 4Z"/><path d="M5 15 24 26l19-11M24 26v19"/></svg>
-              <span className="text-xs">Miniature à venir</span>
-            </div>
+            {model.files.length > 0 ? <ModelThumbnail modelId={model.id} fileId={(model.files.find(f => f.id === model.previewFileId) ?? model.files[0]).id} format={(model.files.find(f => f.id === model.previewFileId) ?? model.files[0]).format} rotation={[model.previewRotationX, model.previewRotationY, model.previewRotationZ]} zoom={model.previewZoom} /> : <div className="flex aspect-[4/3] items-center justify-center opacity-50">Aucune pièce</div>}
             <div className="space-y-2 p-4">
               <p className="truncate text-lg font-semibold">{model.displayName ?? model.driveName}</p>
               <div className="flex flex-wrap gap-2 text-xs opacity-70"><span>{model.files.length} pièce(s)</span>{model.category && <span>· {model.category.name}</span>}</div>

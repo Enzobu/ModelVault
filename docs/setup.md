@@ -49,3 +49,7 @@ Le premier test doit vérifier les compteurs et comparer les nombres de dossiers
 ## Mise en production
 
 Consulter [la checklist de préproduction et de restauration](release-checklist.md) avant tout passage sur `main`. Aucun déploiement production n'est validé à ce stade.
+
+## Miniatures 3D persistantes
+
+La galerie lance la génération de miniatures **à la demande**, lorsque les cartes apparaissent à l'écran : rendu WebGL 320×240 (STL, OBJ, 3MF), puis stockage du PNG dans le volume Docker `THUMBNAILS_PATH` via une API authentifiée. Deux rendus maximum sont effectués simultanément dans l'onglet pour limiter la charge ; les visites suivantes réutilisent le PNG stocké. Le nom du cache dépend du modèle, de la pièce choisie et des paramètres d'orientation/zoom. Lors de la première exploration d'une page, les miniatures peuvent prendre quelques secondes. Si WebGL est indisponible, un pictogramme de secours reste affiché. Vérifier l'accès en écriture de `/app/data/thumbnails` pour l'utilisateur non-root du conteneur. Un nettoyage périodique des variantes obsolètes est à prévoir avant la production.
