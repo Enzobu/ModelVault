@@ -9,3 +9,7 @@ out/
 coverage/
 *.log
 *.tsbuildinfo
+
+backups/
+*.sql
+*.sql.tmp
