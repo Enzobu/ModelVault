@@ -4,6 +4,7 @@ export default function AdminNav({ editor = false }: { editor?: boolean }) {
     <Link href="/" className="rounded-lg border border-current/15 px-3 py-2 hover:border-[var(--accent)]">Galerie</Link>
     <Link href="/admin/organize" className="rounded-lg border border-current/15 px-3 py-2 hover:border-[var(--accent)]">À organiser</Link>
     {!editor && <><Link href="/admin/users" className="rounded-lg border border-current/15 px-3 py-2 hover:border-[var(--accent)]">Utilisateurs</Link>
-    <Link href="/admin/drive" className="rounded-lg border border-current/15 px-3 py-2 hover:border-[var(--accent)]">Google Drive</Link></>}
+    <Link href="/admin/drive" className="rounded-lg border border-current/15 px-3 py-2 hover:border-[var(--accent)]">Google Drive</Link>
+    <Link href="/admin/diagnostics" className="rounded-lg border border-current/15 px-3 py-2 hover:border-[var(--accent)]">Diagnostics</Link></>}
   </nav>;
 }
