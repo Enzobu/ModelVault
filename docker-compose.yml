@@ -56,3 +56,19 @@ services:
           fi
           sleep 60
         done
+
+  database-backup:
+    profiles: ["backups"]
+    image: mariadb:11.4
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE:?required}
+      MARIADB_USER: ${MARIADB_USER:?required}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?required}
+    volumes:
+      - ${MARIADB_BACKUP_PATH:-./backups}:/backups
+      - ./scripts/backup-mariadb.sh:/usr/local/bin/backup-mariadb.sh:ro
+    entrypoint: ["/bin/sh", "/usr/local/bin/backup-mariadb.sh"]
