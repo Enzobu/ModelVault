@@ -21,9 +21,11 @@ export async function GET(request: NextRequest) {
   const [user, model] = await Promise.all([
     prisma.user.findUnique({ where: { id: ticket.userId }, select: { role: true } }),
     prisma.model3D.findFirst({ where: { id: ticket.modelId, isHidden: false, removedFromDrive: false },
-      select: { files: { select: { googleFileId: true, filename: true }, orderBy: { filename: "asc" } } } }),
+      select: { files: { select: { googleFileId: true, filename: true, sizeBytes: true }, orderBy: { filename: "asc" } } } }),
   ]);
   if (!user || user.role === "PENDING" || !model?.files.length) return new Response("Unavailable", { status: 403 });
+  const totalBytes = model.files.reduce((total, file) => total + (file.sizeBytes ?? 0n), 0n);
+  if (model.files.length > 500 || totalBytes > 1_500_000_000n) return new Response("Archive too large", { status: 413 });
   const accessToken = await driveAccessToken();
   const archive = archiver("zip", { zlib: { level: 0 } });
   const output = new PassThrough();
