@@ -33,16 +33,19 @@ export async function POST(request: NextRequest) {
     data: { running: true, requested: false, startedAt: now, lastError: null },
   });
   if (claimed.count !== 1) return NextResponse.json({ status: "running" });
+  const started = Date.now();
   try {
     const stats = await indexDriveModels();
+    const durationMs = Date.now() - started;
+    console.info("Drive synchronization finished", { durationMs, ...stats });
     await prisma.driveSyncState.update({
       where: { id: 1 },
-      data: { running: false, completedAt: new Date(), lastResult: JSON.stringify(stats), lastError: null },
+      data: { running: false, completedAt: new Date(), lastResult: JSON.stringify({ ...stats, durationMs }), lastError: null },
     });
-    return NextResponse.json({ status: "done", stats });
+    return NextResponse.json({ status: "done", stats, durationMs });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unexpected synchronization error";
-    console.error("Google Drive sync failed:", message);
+    console.error("Google Drive sync failed:", { durationMs: Date.now() - started, message });
     await prisma.driveSyncState.update({
       where: { id: 1 },
       data: { running: false, completedAt: new Date(), lastError: message.slice(0, 1000) },
