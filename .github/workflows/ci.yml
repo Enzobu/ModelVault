@@ -19,6 +19,22 @@ jobs:
       - run: npx prisma validate
         env:
           DATABASE_URL: mysql://modelvault:dummy@localhost:3306/modelvault
+      - name: Validate Docker Compose configuration
+        env:
+          MARIADB_DATABASE: modelvault
+          MARIADB_USER: modelvault
+          MARIADB_PASSWORD: dummy
+          MARIADB_ROOT_PASSWORD: dummy
+          MARIADB_DATA_PATH: /tmp/modelvault/mariadb
+          THUMBNAILS_PATH: /tmp/modelvault/thumbnails
+          CACHE_PATH: /tmp/modelvault/cache
+          DATABASE_URL: mysql://modelvault:dummy@database:3306/modelvault
+          AUTH_SECRET: dummy
+          AUTH_URL: https://example.com
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          INITIAL_ADMIN_EMAIL: admin@example.com
+        run: docker compose -f docker-compose.yml config --quiet
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
