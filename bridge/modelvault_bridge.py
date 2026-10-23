@@ -34,6 +34,10 @@ def install(cura=None):
     if exe is not None and exe.suffix.lower() != ".exe":
         raise ValueError("Cura doit être un fichier .exe")
     APP_DIR.mkdir(parents=True, exist_ok=True)
+    if exe is None and CONFIG_PATH.is_file():
+        configured = json.loads(CONFIG_PATH.read_text(encoding="utf-8")).get("cura", "")
+        if configured and pathlib.Path(configured).is_file():
+            exe = pathlib.Path(configured)
     CONFIG_PATH.write_text(json.dumps({"cura": str(exe) if exe else ""}), encoding="utf-8")
     command = subprocess.list2cmdline(([sys.executable] if getattr(sys, "frozen", False) else [sys.executable, str(pathlib.Path(__file__).resolve())]) + ["%1"])
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, r"Software\Classes\modelvault") as key:
@@ -105,13 +109,12 @@ def open_model(uri):
                 raise ValueError("Nom de fichier non autorisé dans l'archive")
             path = parts_dir / (str(idx) + "_" + filename.name)
             with archive.open(member) as source, path.open("wb") as destination:
-                import shutil
                 shutil.copyfileobj(source, destination)
             files.append(str(path))
     if not files:
         raise ValueError("Aucune pièce compatible dans le modèle")
     process = subprocess.Popen([str(cura), *files])
-    # Cura may load the files asynchronously; wait briefly before the temporary directory disappears.
+    # Cura loads files asynchronously; the persistent import directory remains available.
     # Files remain in the cache while Cura loads them.
     if process.poll() not in (None, 0):
         raise RuntimeError("Cura n'a pas démarré correctement")
@@ -130,7 +133,14 @@ def main():
             return 2
         return 0
     except Exception as exc:
-        print("Erreur ModelVault Bridge :", str(exc), file=sys.stderr)
+        message = "ModelVault Bridge : " + str(exc)
+        print(message, file=sys.stderr)
+        if getattr(sys, "frozen", False):
+            try:
+                import ctypes
+                ctypes.windll.user32.MessageBoxW(None, message[:500], "ModelVault Bridge", 0x10)
+            except Exception:
+                pass
         return 1
 
 if __name__ == "__main__":
