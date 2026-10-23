@@ -1,0 +1,37 @@
+name: Bridge Windows Installer
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'bridge/**'
+      - '.github/workflows/bridge-windows.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile Python helper
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check 'pyinstaller>=6,<7'
+          python -m PyInstaller --onefile --noconsole --name ModelVaultBridge bridge/modelvault_bridge.py
+          if (!(Test-Path dist/ModelVaultBridge.exe)) { throw 'Bridge executable missing' }
+      - name: Create Windows installer
+        shell: pwsh
+        run: |
+          choco install innosetup --yes --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" bridge\installer.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup build failed' }
+          if (!(Test-Path dist/installer/ModelVaultBridge-Setup.exe)) { throw 'Installer missing' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ModelVaultBridge-Windows-Setup
+          path: dist/installer/ModelVaultBridge-Setup.exe
+          if-no-files-found: error
+          retention-days: 30
