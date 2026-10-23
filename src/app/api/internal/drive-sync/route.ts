@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { indexDriveModels } from "@/lib/drive-indexer";
+import { pruneThumbnailCache } from "@/lib/thumbnails";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,11 +37,15 @@ export async function POST(request: NextRequest) {
   const started = Date.now();
   try {
     const stats = await indexDriveModels();
+    const removedThumbnails = await pruneThumbnailCache().catch(error => {
+      console.error("Thumbnail cache cleanup failed", error instanceof Error ? error.message : "unknown");
+      return 0;
+    });
     const durationMs = Date.now() - started;
     console.info("Drive synchronization finished", { durationMs, ...stats });
     await prisma.driveSyncState.update({
       where: { id: 1 },
-      data: { running: false, completedAt: new Date(), lastResult: JSON.stringify({ ...stats, durationMs }), lastError: null },
+      data: { running: false, completedAt: new Date(), lastResult: JSON.stringify({ ...stats, durationMs, removedThumbnails }), lastError: null },
     });
     return NextResponse.json({ status: "done", stats, durationMs });
   } catch (error) {
