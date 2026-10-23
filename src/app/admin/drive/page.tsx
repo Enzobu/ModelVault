@@ -1,4 +1,5 @@
 import AdminNav from "@/components/admin-nav";
+import SubmitButton from "@/components/submit-button";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
@@ -23,7 +24,7 @@ export default async function AdminDrive() {
         <form action={setRootFolder} className="space-y-3">
           <label htmlFor="folderId" className="block">Identifiant ou URL du dossier racine Drive</label>
           <input id="folderId" name="folderId" required defaultValue={connection.rootFolderId ?? ""} placeholder="https://drive.google.com/drive/folders/..." className="w-full rounded-lg border border-current/20 bg-transparent p-3" />
-          <button className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white" type="submit">Valider ce dossier</button>
+          <SubmitButton className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white">Valider ce dossier</SubmitButton>
         </form>
         <form action={disconnectDrive}><button type="submit" className="rounded-lg border px-4 py-2">Déconnecter Drive</button></form>
       </section>}
@@ -33,7 +34,7 @@ export default async function AdminDrive() {
       <p>Dernier lancement : {sync?.startedAt?.toLocaleString("fr-FR") ?? "Jamais"}</p>
       <p>Dernier bilan : {sync?.lastResult ?? "Aucun"}</p>
       {sync?.lastError && <p className="text-red-500">Erreur : {sync.lastError}</p>}
-      <form action={requestDriveSync}><button className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white" type="submit">Synchroniser maintenant</button></form>
+      <form action={requestDriveSync}><SubmitButton className="rounded-lg bg-[var(--accent)] px-4 py-2 text-white">Synchroniser maintenant</SubmitButton></form>
       <p className="text-sm opacity-70">Le worker vérifie les demandes toutes les minutes et relance automatiquement une synchronisation environ chaque heure.</p>
     </section>}
   </main>;
