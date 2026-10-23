@@ -9,9 +9,9 @@
 - [ ] Indexation Drive sur un dossier de test : ajout/renommage/suppression, absence de doublons, préservation des favoris/tags.
 - [ ] Synchronisation horaire testée au-delà de deux cycles, erreurs/récupération visibles et contention évitée.
 - [ ] Test STL/OBJ/3MF représentatifs, modèles multipièces et modèles volumineux ; gestion échec réseau Drive.
-- [ ] Miniatures persistantes, cache/quotas/éviction/performances mesurés ; ticket #24 encore ouvert.
+- [ ] Miniatures persistantes, cache/quotas/éviction/performances mesurés ; ticket #24 implémenté, à valider en préprod.
 - [ ] Téléchargements simples/ZIP vérifiés sur des fichiers volumineux ; aucune fuite de token.
-- [ ] ModelVault Bridge testé avec la version Windows/Cura visée ; ticket #30 encore ouvert.
+- [ ] ModelVault Bridge testé avec la version Windows/Cura visée ; ticket #30 implémenté, à valider sur Windows.
 - [ ] Revue d'accessibilité, mobile, états vides et de l'ensemble des 8 palettes (light/dark/system).
 - [ ] Google OAuth Drive : périmètre du scope `drive.readonly`, état Testing/expiration des refresh tokens et validation/politique Google.
 - [ ] Secrets distincts en prod/préprod : `AUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY`, `DRIVE_SYNC_CRON_SECRET`.
@@ -47,4 +47,4 @@ Avant une publication, conserver les références image/commit et une sauvegarde
 
 ## Décision finale
 
-Compléter cette liste, valider les tickets ouverts #21/#22/#24/#25/#30, obtenir les mesures et l'accord explicite avant toute PR `dev → main`. Aucune action automatique vers `main` n'est autorisée par cette checklist.
+Compléter cette liste, exécuter la [campagne de tests finale](final-qa.md), obtenir les mesures et l'accord explicite avant toute PR `dev → main`. Aucune action automatique vers `main` n'est autorisée par cette checklist.
