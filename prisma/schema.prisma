@@ -26,6 +26,9 @@ model User {
   googleSub           String       @unique
   email               String       @unique
   displayName         String?
+  googleAvatarUrl     String?
+  avatarCustom        Boolean @default(false)
+  avatarFile          String?
   role                Role         @default(PENDING)
   onboardingCompleted Boolean      @default(false)
   theme               Theme        @default(SYSTEM)

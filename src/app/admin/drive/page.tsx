@@ -1,3 +1,4 @@
+import SiteHeader from "@/components/site-header";
 import AdminNav from "@/components/admin-nav";
 import SubmitButton from "@/components/submit-button";
 import { redirect } from "next/navigation";
@@ -14,7 +15,8 @@ export default async function AdminDrive() {
     select: { rootFolderId: true, rootFolderName: true, updatedAt: true },
   });
   const sync = await prisma.driveSyncState.findUnique({ where: { id: 1 } });
-  return <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-8">
+  return <main className="admin-shell mx-auto max-w-[1500px] space-y-5 px-4 pb-8 sm:px-6 lg:px-8">
+    <SiteHeader user={user}/>
     <AdminNav />
     <h1 className="text-3xl font-semibold">Google Drive</h1>
     <p className="text-sm opacity-70">Connexion réservée aux administrateurs. Autorisation Drive en lecture seule, indépendante du SSO des utilisateurs.</p>

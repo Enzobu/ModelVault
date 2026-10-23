@@ -1,3 +1,4 @@
+import SiteHeader from "@/components/site-header";
 import AdminNav from "@/components/admin-nav";
 import SubmitButton from "@/components/submit-button";
 import { redirect } from "next/navigation";
@@ -13,7 +14,8 @@ export default async function AdminUsers() {
     orderBy: [{ role: "asc" }, { createdAt: "desc" }],
     select: { id: true, email: true, displayName: true, role: true, createdAt: true },
   });
-  return <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-8">
+  return <main className="admin-shell mx-auto max-w-[1500px] space-y-5 px-4 pb-8 sm:px-6 lg:px-8">
+    <SiteHeader user={viewer}/>
     <div><AdminNav /><h1 className="mt-5 text-3xl font-semibold">Utilisateurs</h1>
       <p className="opacity-70">{users.filter(u => u.role === "PENDING").length} demande(s) en attente</p></div>
     <div className="space-y-4">

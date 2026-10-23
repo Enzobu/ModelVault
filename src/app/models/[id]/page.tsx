@@ -1,3 +1,4 @@
+import SiteHeader from "@/components/site-header";
 import Link from "next/link";
 import ModelViewer from "@/components/model-viewer";
 import SubmitButton from "@/components/submit-button";
@@ -20,7 +21,8 @@ export default async function ModelDetail({ params }: { params: Promise<{ id: st
   });
   if (!model) notFound();
 
-  return <main className="mx-auto max-w-5xl space-y-7 px-4 py-7 sm:px-8 sm:py-10">
+  return <main className="model-detail-shell mx-auto max-w-[1500px] space-y-5 px-4 pb-8 sm:px-6 lg:px-8">
+    <SiteHeader user={viewer}/>
     <Link href="/" className="underline underline-offset-4">Retour à la galerie</Link>
     <div className="space-y-2">
       <p className="text-sm opacity-70">{model.organized ? "Organisé" : "À organiser"}</p>
