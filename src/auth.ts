@@ -23,9 +23,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (other && other.id !== existing.id) return false;
           await prisma.user.update({
             where: { id: existing.id },
-            data: { email: user.email, displayName: user.name },
+            data: { email: user.email, googleAvatarUrl: user.image ?? null },
           });
         }
+        if(user.image && existing.googleAvatarUrl !== user.image) await prisma.user.update({where:{id:existing.id},data:{googleAvatarUrl:user.image}});
         return true;
       }
       // An email collision with a different Google subject must not take over a user.
@@ -37,6 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           googleSub,
           email: user.email,
           displayName: user.name,
+          googleAvatarUrl: user.image ?? null,
           role: isInitialAdmin ? "ADMIN" : "PENDING",
         },
       });
