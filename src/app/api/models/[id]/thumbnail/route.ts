@@ -22,7 +22,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   if (!item) return new Response("Not found", { status: 404 });
   try {
     const image = await readFile(item.path);
-    return new Response(image, { headers: { "Content-Type": "image/png", "Cache-Control": "private, max-age=86400",
+    return new Response(image, { headers: { "Content-Type": "image/png", "Cache-Control": "private, no-cache, must-revalidate",
       "X-Content-Type-Options": "nosniff" } });
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return new Response("Not found", { status: 404 });
