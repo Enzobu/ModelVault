@@ -12,10 +12,12 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const { id } = await params;
   const model = await prisma.model3D.findFirst({
     where: { id, isHidden: false, removedFromDrive: false },
-    select: { driveName: true, displayName: true, files: { select: { id: true, googleFileId: true, filename: true }, orderBy: { filename: "asc" } } },
+    select: { driveName: true, displayName: true, files: { select: { id: true, googleFileId: true, filename: true, sizeBytes: true }, orderBy: { filename: "asc" } } },
   });
   if (!model) return new Response("Not found", { status: 404 });
   if (!model.files.length) return new Response("No files to download", { status: 404 });
+  const totalBytes = model.files.reduce((total, file) => total + (file.sizeBytes ?? 0n), 0n);
+  if (model.files.length > 500 || totalBytes > 1_500_000_000n) return new Response("Archive too large", { status: 413 });
   const token = await driveAccessToken();
   const archive = archiver("zip", { zlib: { level: 6 } });
   const output = new PassThrough();
