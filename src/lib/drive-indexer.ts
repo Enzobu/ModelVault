@@ -93,7 +93,7 @@ export async function indexDriveModels(): Promise<IndexStats> {
     }
   }
   // Only reconcile missing folders after a complete, successful root listing.
-  await prisma.model3D.updateMany({
+  if (stats.errors === 0) await prisma.model3D.updateMany({
     where: { driveFolderId: { notIn: seenFolderIds } },
     data: { removedFromDrive: true },
   });

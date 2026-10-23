@@ -14,3 +14,8 @@ test("soft removal is migrated", () => {
  assert.match(load("prisma/schema.prisma"),/removedFromDrive\s+Boolean/);
  assert.match(load("prisma/migrations/20261022010000_drive_soft_deleted/migration.sql"),/ADD COLUMN `removedFromDrive`/);
 });
+
+test("incomplete scans do not soft-delete unrelated folders", () => {
+ const code=load("src/lib/drive-indexer.ts");
+ assert.match(code,/if \(stats\.errors === 0\) await prisma\.model3D\.updateMany/);
+});
