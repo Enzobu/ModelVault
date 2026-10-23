@@ -113,3 +113,12 @@ model DriveSyncState {
   lastResult  String?   @db.Text
   lastError   String?   @db.Text
 }
+
+model BridgeTicket {
+  tokenHash String @id @db.VarChar(64)
+  modelId String
+  userId String
+  expiresAt DateTime
+  consumedAt DateTime?
+  @@index([expiresAt])
+}
