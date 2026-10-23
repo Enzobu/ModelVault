@@ -1,3 +1,4 @@
+import SiteHeader from "@/components/site-header";
 import Link from "next/link";
 import AdminNav from "@/components/admin-nav";
 import SubmitButton from "@/components/submit-button";
@@ -24,7 +25,8 @@ export default async function Organize({ searchParams }: { searchParams: Promise
     prisma.category.findMany({ orderBy: { name: "asc" } }),
     prisma.tag.findMany({ orderBy: { name: "asc" } }),
   ]);
-  return <main className="mx-auto max-w-5xl space-y-8 p-6 md:p-10">
+  return <main className="admin-shell mx-auto max-w-[1500px] space-y-5 px-4 pb-8 sm:px-6 lg:px-8">
+    <SiteHeader user={viewer} active="organize"/>
     <AdminNav editor={viewer.role !== "ADMIN"} />
     <header className="space-y-2"><h1 className="text-3xl font-semibold">Gérer les modèles</h1><p className="ui-muted">{total} modèle(s) dans cette vue</p></header>
     <nav aria-label="Vues des modèles" className="flex flex-wrap gap-3">
