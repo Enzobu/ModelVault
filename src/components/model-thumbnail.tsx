@@ -43,7 +43,7 @@ async function generate(props: Props, signal: AbortSignal) {
     const center = bounds.getCenter(new THREE.Vector3());
     object.position.sub(center);
     const size = bounds.getSize(new THREE.Vector3());
-    object.rotation.set(...props.rotation.map(v => THREE.MathUtils.degToRad(v)) as [number, number, number]);
+    object.rotation.set(THREE.MathUtils.degToRad(props.rotation[0]), THREE.MathUtils.degToRad(props.rotation[1]), THREE.MathUtils.degToRad(props.rotation[2]));
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x252b36);
     scene.add(object);
